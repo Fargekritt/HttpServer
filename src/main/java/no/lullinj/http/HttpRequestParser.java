@@ -27,7 +27,7 @@ public class HttpRequestParser {
         return new HttpRequest(headers, body, method, uri, version);
     }
 
-    private void parseBody(BufferedReader input) {
+    private void parseBody(BufferedReader input) throws InvalidHttpRequestException {
         if (getContentLength() < 1) {
             return;
         }
@@ -35,11 +35,14 @@ public class HttpRequestParser {
         try {
             int contentLength = getContentLength();
             char[] buffer = new char[contentLength];
-            input.read(buffer);
+            int readBytesLength = input.read(buffer);
+            if (readBytesLength < getContentLength()){
+                throw new InvalidHttpRequestException();
+            }
             stringBuilder.append(buffer);
             body = stringBuilder.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new InvalidHttpRequestException();
         }
 
 

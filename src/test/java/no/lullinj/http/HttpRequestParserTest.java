@@ -13,7 +13,7 @@ public class HttpRequestParserTest {
 
     @Test
     void testParseHttpRequestShouldParseStatusLine() {
-        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 100\r\n\r\n";
+        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nName: Amund\r\n\r\n";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
 
         HttpRequestParser parser = new HttpRequestParser();
@@ -31,14 +31,14 @@ public class HttpRequestParserTest {
     }
     @Test
     void testParseHttpRequestShouldParseHeaders() {
-        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 100\r\n\r\n";
+        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nName: Amund\r\n\r\n";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
 
         HttpRequestParser parser = new HttpRequestParser();
         try {
             HttpRequest request = parser.parseHttpRequest(stream);
-            List<String> header= request.getHeader("content-length");
-            assertEquals(List.of("100"), header);
+            List<String> header= request.getHeader("name");
+            assertEquals(List.of("Amund"), header);
         } catch (InvalidHttpRequestException e) {
             fail("Exception should not be thrown.");
         }
@@ -60,6 +60,18 @@ public class HttpRequestParserTest {
         } catch (InvalidHttpRequestException e) {
             fail("Exception should not be thrown.");
         }
+    }
+
+
+    @Test
+    void testParseHttpRequestShouldThrowWhenBodyTooShort(){
+        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter ";
+        InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
+        HttpRequestParser parser = new HttpRequestParser();
+
+        assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(stream));
+
+
     }
 
 //Should headers be split? not sure need to do research
