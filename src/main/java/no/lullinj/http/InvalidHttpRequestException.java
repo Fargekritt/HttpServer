@@ -1,4 +1,4 @@
-package no.lullinj;
+package no.lullinj.http;
 
 import java.io.IOException;
 

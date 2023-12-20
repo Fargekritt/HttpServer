@@ -1,7 +1,5 @@
 package no.lullinj.http;
 
-import no.lullinj.InvalidHttpRequestException;
-
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +10,7 @@ public class HttpRequestParser {
 
     private Map<String, List<String>> headers;
     private String body;
-    private String method;
+    private HttpMethod method;
     private String uri;
     private String version;
 
@@ -54,10 +52,14 @@ public class HttpRequestParser {
         if (statusLine.length != 3) {
             throw new InvalidHttpRequestException("Invalid Status line: " + Arrays.toString(statusLine));
         }
+        try{
 
-        method = statusLine[0];
-        uri = statusLine[1];
-        version = statusLine[2];
+            method = HttpMethod.valueOf(statusLine[0]);
+            uri = statusLine[1];
+            version = statusLine[2];
+        } catch (IllegalArgumentException e){
+            throw new InvalidHttpRequestException("Invalid method \"" + statusLine[0] +"\"");
+        }
     }
 
 

@@ -2,6 +2,7 @@ package no.lullinj;
 
 import no.lullinj.http.HttpRequest;
 import no.lullinj.http.HttpRequestParser;
+import no.lullinj.http.InvalidHttpRequestException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,8 +10,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * The Server class represents a server that listens for client connections on a specific port and responds with a simple HTTP response.

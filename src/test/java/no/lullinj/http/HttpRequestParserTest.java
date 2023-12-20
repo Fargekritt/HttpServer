@@ -1,6 +1,5 @@
 package no.lullinj.http;
 
-import no.lullinj.InvalidHttpRequestException;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -19,10 +18,10 @@ public class HttpRequestParserTest {
         HttpRequestParser parser = new HttpRequestParser();
         try {
             HttpRequest request = parser.parseHttpRequest(stream);
-            String methode = request.getMethod();
+            HttpMethod methode = request.getMethod();
             String uri = request.getUri();
             String version = request.getVersion();
-            assertEquals(methode, "GET");
+            assertEquals(methode, HttpMethod.GET);
             assertEquals(uri, "/");
             assertEquals(version, "HTTP/1.1");
         } catch (InvalidHttpRequestException e) {
@@ -46,7 +45,7 @@ public class HttpRequestParserTest {
 
     @Test
     void testParseHttpRequestShouldParseBody(){
-        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
+        String mockRequest= "POST / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         String expectedBody ="Hei, jeg heter amund";
         HttpRequestParser parser = new HttpRequestParser();
@@ -65,18 +64,17 @@ public class HttpRequestParserTest {
 
     @Test
     void testParseHttpRequestThrowsWhenBodyTooShort(){
-        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter ";
+        String mockRequest= "POST / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter ";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         HttpRequestParser parser = new HttpRequestParser();
 
         assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(stream));
 
-
     }
 
     @Test
     void testParserHttpRequestThrowsWhenInvalidStatusLine(){
-        String mockRequest= "GET HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
+        String mockRequest= "POST HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         HttpRequestParser parser = new HttpRequestParser();
 
@@ -90,12 +88,12 @@ public class HttpRequestParserTest {
         InputStream finalStream2 = stream;
         assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(finalStream2));
 
-        mockRequest= "GET / \r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
+        mockRequest= "POST / \r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
         stream = new ByteArrayInputStream(mockRequest.getBytes());
         InputStream finalStream3 = stream;
         assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(finalStream3));
 
-        mockRequest= "GET / HTTP/1.1 P\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
+        mockRequest= "POST / HTTP/1.1 P\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
         stream = new ByteArrayInputStream(mockRequest.getBytes());
         InputStream finalStream4 = stream;
         assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(finalStream4));
@@ -103,7 +101,7 @@ public class HttpRequestParserTest {
 
     @Test
     void testParseHttpRequestThrowsWhenContentLengthIsInvalid(){
-        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: a\r\n\r\nHei, jeg heter amund";
+        String mockRequest= "POST / HTTP/1.1\r\nHost: host\r\nContent-Length: a\r\n\r\nHei, jeg heter amund";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         HttpRequestParser parser = new HttpRequestParser();
 
@@ -120,6 +118,15 @@ public class HttpRequestParserTest {
         HttpRequestParser parser = new HttpRequestParser();
         Exception exception = assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(stream));
         assertEquals("Invalid header pair for headerLine \"Content-Length:\"",exception.getMessage());
+    }
+
+    @Test
+    void testParseHttpRequestThrowsWhenInvalidMethod(){
+        String mockRequest= "GETT / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
+        InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
+        HttpRequestParser parser = new HttpRequestParser();
+        Exception exception = assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(stream));
+        assertEquals("Invalid method \"GETT\"",exception.getMessage());
     }
 
 //Should headers be split? not sure need to do research
