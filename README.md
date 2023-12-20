@@ -11,10 +11,18 @@ This project is my attempt to make an HTTP server with sockets with as few 3rd p
          * [ ] Validate methode
          * [ ] Validate uri
          * [ ] Validate Version
-     * [ ] Parse Headers
+     * [x] Parse Headers
        * [x] split HeaderName and headerValue
        * [x] Split headerValue into a list
-       * [ ] Validate data
+       * [x] Validate data
      * [ ] Parse Body
        * [ ] Based on Content-Length 
        * [ ] Validate data
+ * [ ] Logging
+ * [ ] HttpResponse
+   * [ ] HttpResponseBuilder
+
+
+
+* [ ] Testing
+
