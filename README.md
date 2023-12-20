@@ -32,7 +32,7 @@ This project is my attempt to make an HTTP server with sockets with as few 3rd p
     * [x] Basic test with simple invalid input
     * [ ] Basic test with complex input 
     * [ ] Basic test with complex invalid input
-    * [ ] Valid methods (GET, POST DELETE, PUT)
+    * [x] Valid methods (GET, POST DELETE, PUT)
     * [ ] Valid HTTP version
   * [ ] HttpResponseBuilder
     * [ ] Basic test with simple output
