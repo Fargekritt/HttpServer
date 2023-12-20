@@ -34,15 +34,14 @@ public class Server {
         Socket clientSocket = serverSocket.accept();
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-        HttpRequest message = null;
+        HttpRequest message;
         try {
             message = parseHttpRequest(clientSocket);
         } catch (InvalidHttpRequestException e) {
             throw new RuntimeException(e);
         }
         System.out.println(message.getHeader("content-length"));
-        System.out.println(message.getBody());
+
 
         out.println("""
                 HTTP/1.1 200 OK
@@ -60,7 +59,9 @@ public class Server {
         HttpRequestParser parser = new HttpRequestParser();
 
         try {
-            return parser.parseHttpRequest(socket.getInputStream());
+            HttpRequest request = parser.parseHttpRequest(socket.getInputStream());
+            System.out.println(parser.getHeaders());
+            return request;
         } catch (IOException e) {
             throw new InvalidHttpRequestException();
         }

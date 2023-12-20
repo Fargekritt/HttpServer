@@ -1,11 +1,8 @@
 package no.lullinj.http;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class HttpRequest {
 
@@ -16,12 +13,15 @@ public class HttpRequest {
 
     private final String uri;
 
+    private final String version;
 
-    public HttpRequest(Map<String, List<String>> headers, String body, String method, String uri){
+
+    public HttpRequest(Map<String, List<String>> headers, String body, String method, String uri, String version){
         this.headers = headers;
         this.body = body;
         this.method = method;
         this.uri = uri;
+        this.version = version;
     }
 
 
@@ -44,4 +44,7 @@ public class HttpRequest {
         return uri;
     }
 
+    public String getVersion() {
+        return version;
+    }
 }
