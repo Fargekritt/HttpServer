@@ -102,7 +102,7 @@ public class HttpRequestParserTest {
     }
 
     @Test
-    void testHttpRequestParserThrowsWhenContentLengthIsInvalid(){
+    void testParseHttpRequestThrowsWhenContentLengthIsInvalid(){
         String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: a\r\n\r\nHei, jeg heter amund";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         HttpRequestParser parser = new HttpRequestParser();
@@ -114,7 +114,7 @@ public class HttpRequestParserTest {
 
 
     @Test
-    void testHttpRequestParserThrowsWhenHeaderIsMissingValue() throws InvalidHttpRequestException {
+    void testParseHttpRequestThrowsWhenHeaderIsMissingValue() throws InvalidHttpRequestException {
         String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length:\r\n\r\nHei, jeg heter amund";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         HttpRequestParser parser = new HttpRequestParser();
