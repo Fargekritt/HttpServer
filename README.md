@@ -1,4 +1,4 @@
-[![Java CI with Maven](https://github.com/Fargekritt/HttpServer/actions/workflows/maven.yml/badge.svg)](https://github.com/Fargekritt/HttpServer/actions/workflows/maven.yml)
+[![Java CI with Maven](https://github.com/Fargekritt/HttpServer/actions/workflows/workflow.yml/badge.svg)](https://github.com/Fargekritt/HttpServer/actions/workflows/maven.yml)
 
 # Amund's Http server
 
