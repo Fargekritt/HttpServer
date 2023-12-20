@@ -157,7 +157,7 @@ public class HttpRequestParserTest {
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         HttpRequestParser parser = new HttpRequestParser();
         Exception exception = assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(stream));
-        assertEquals("Invalid method \"GETT\"",exception.getMessage());
+        assertEquals("Unexpected value for method \"GETT\"",exception.getMessage());
     }
 
 //Should headers be split? not sure need to do research

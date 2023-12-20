@@ -59,7 +59,6 @@ public class Server {
 
         try {
             HttpRequest request = parser.parseHttpRequest(socket.getInputStream());
-            System.out.println(parser.getHeaders());
             return request;
         } catch (IOException e) {
             throw new InvalidHttpRequestException();
