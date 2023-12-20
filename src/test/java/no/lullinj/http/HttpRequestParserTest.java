@@ -45,7 +45,7 @@ public class HttpRequestParserTest {
     }
 
     @Test
-    void testParseHttpRequestShouldParseBdy(){
+    void testParseHttpRequestShouldParseBody(){
         String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         String expectedBody ="Hei, jeg heter amund";
@@ -108,8 +108,18 @@ public class HttpRequestParserTest {
         HttpRequestParser parser = new HttpRequestParser();
 
         Exception exception = assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(stream));
-        assertEquals("Content-length must be a number: a",exception.getMessage());
+        assertEquals("Invalid Content-Length value: a",exception.getMessage());
         assertEquals(NumberFormatException.class, exception.getCause().getClass());
+    }
+
+
+    @Test
+    void testHttpRequestParserThrowsWhenHeaderIsMissingValue() throws InvalidHttpRequestException {
+        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length:\r\n\r\nHei, jeg heter amund";
+        InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
+        HttpRequestParser parser = new HttpRequestParser();
+        Exception exception = assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(stream));
+        assertEquals("Invalid header pair for headerLine \"Content-Length:\"",exception.getMessage());
     }
 
 //Should headers be split? not sure need to do research

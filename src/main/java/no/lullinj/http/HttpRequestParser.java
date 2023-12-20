@@ -38,7 +38,7 @@ public class HttpRequestParser {
             char[] buffer = new char[contentLength];
             int readBytesLength = input.read(buffer);
             if (readBytesLength < getContentLength()){
-                throw new InvalidHttpRequestException();
+                throw new InvalidHttpRequestException("Body too short, Content-Length:" + getContentLength() + " Body Length: "  +readBytesLength);
             }
             stringBuilder.append(buffer);
             body = stringBuilder.toString();
@@ -61,7 +61,7 @@ public class HttpRequestParser {
     }
 
 
-    private String readLine(BufferedReader input) {
+    private String readLine(BufferedReader input) throws InvalidHttpRequestException {
 
         try {
             String line = input.readLine();
@@ -70,7 +70,7 @@ public class HttpRequestParser {
             }
             return line;
         } catch (IOException e) {
-            return "";
+            throw new InvalidHttpRequestException(e);
         }
     }
 
@@ -81,8 +81,8 @@ public class HttpRequestParser {
         while (!headerLine.isEmpty()) {
             //Parse header
             String[] headerElements = headerLine.split(":", 2);
-            if (headerElements.length != 2) {
-                throw new InvalidHttpRequestException();
+            if (headerElements.length != 2 || headerElements[1].isEmpty()) {
+                throw new InvalidHttpRequestException("Invalid header pair for headerLine \"" + headerLine+"\"");
             }
             //Creates
             String headerName = headerElements[0].trim();
@@ -95,10 +95,6 @@ public class HttpRequestParser {
             headerLine = readLine(input);
         }
 
-
-    }
-
-    private void parsBody(BufferedReader input) {
 
     }
 
@@ -120,7 +116,7 @@ public class HttpRequestParser {
 
         } catch (NumberFormatException e) {
 
-            throw new InvalidHttpRequestException("Content-length must be a number: "  + contentLengthHeader.getFirst(), e);
+            throw new InvalidHttpRequestException("Invalid Content-Length value: "  + contentLengthHeader.getFirst(), e);
         }
     }
 }
