@@ -35,7 +35,7 @@ public class HttpRequestParser {
         try {
             int contentLength = getContentLength();
             char[] buffer = new char[contentLength];
-            int _ = input.read(buffer);
+            input.read(buffer);
             stringBuilder.append(buffer);
             body = stringBuilder.toString();
         } catch (IOException e) {
