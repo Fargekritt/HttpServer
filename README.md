@@ -1,5 +1,4 @@
-[![Java CI with Maven](https://github.com/Fargekritt/HttpServer/actions/workflows/workflow.yml/badge.svg)](https://github.com/Fargekritt/HttpServer/actions/workflows/maven.yml)
-
+[![Tests](https://github.com/Fargekritt/HttpServer/actions/workflows/workflow.yml/badge.svg)](https://github.com/Fargekritt/HttpServer/actions/workflows/workflow.yml)
 # Amund's Http server
 
 This project is my attempt to make an HTTP server with sockets with as few 3rd party libraries as possible.
