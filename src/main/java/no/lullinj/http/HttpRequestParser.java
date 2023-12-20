@@ -27,7 +27,7 @@ public class HttpRequestParser {
     }
 
     private void parseBody(BufferedReader input) throws InvalidHttpRequestException {
-        if (getContentLength() < 1 || method.equals(HttpMethod.GET)) {
+        if (getContentLength() < 1 || method.equals(HttpMethod.GET) || method.equals(HttpMethod.DELETE)) {
             body = "";
             return;
         }

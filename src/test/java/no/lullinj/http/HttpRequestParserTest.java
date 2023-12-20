@@ -77,6 +77,22 @@ public class HttpRequestParserTest {
             fail("Exception should not be thrown.");
         }
     }
+
+    @Test
+    void testParseHttpRequestGetShouldIgnoreBodyOnDelete(){
+        String mockRequest= "DELETE / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
+        InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
+        HttpRequestParser parser = new HttpRequestParser();
+        try {
+            HttpRequest request = parser.parseHttpRequest(stream);
+            List<String> header= request.getHeader("content-length");
+            String body = request.getBody();
+            assertEquals(List.of("20"), header);
+            assert(body.isEmpty());
+        } catch (InvalidHttpRequestException e) {
+            fail("Exception should not be thrown.");
+        }
+    }
     @Test
     void testParseHttpRequestThrowsWhenBodyTooShort(){
         String mockRequest= "POST / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter ";
