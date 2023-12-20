@@ -3,6 +3,7 @@ package no.lullinj.http;
 import no.lullinj.InvalidHttpRequestException;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -42,7 +43,7 @@ public class HttpRequestParser {
             stringBuilder.append(buffer);
             body = stringBuilder.toString();
         } catch (IOException e) {
-            throw new InvalidHttpRequestException();
+            throw new InvalidHttpRequestException(e);
         }
 
 
@@ -51,7 +52,7 @@ public class HttpRequestParser {
     private void parseStatusLine(BufferedReader input) throws InvalidHttpRequestException {
         String[] statusLine = readLine(input).split(" ");
         if (statusLine.length != 3) {
-            throw new InvalidHttpRequestException();
+            throw new InvalidHttpRequestException("Invalid Status line: " + Arrays.toString(statusLine));
         }
 
         method = statusLine[0];
@@ -69,7 +70,6 @@ public class HttpRequestParser {
             }
             return line;
         } catch (IOException e) {
-            e.printStackTrace();
             return "";
         }
     }
@@ -106,17 +106,21 @@ public class HttpRequestParser {
         return headers;
     }
 
-    private int getContentLength() {
+    private int getContentLength() throws InvalidHttpRequestException {
 
         List<String> contentLengthHeader = headers.get("content-length");
-        if (contentLengthHeader == null || contentLengthHeader.isEmpty()) {
+        if (contentLengthHeader == null) {
             return 0;
+        }
+        if(contentLengthHeader.isEmpty()){
+            throw new InvalidHttpRequestException("No value in Content-length header");
         }
         try {
             return Integer.parseInt(contentLengthHeader.getFirst());
 
         } catch (NumberFormatException e) {
-            return 0;
+
+            throw new InvalidHttpRequestException("Content-length must be a number: "  + contentLengthHeader.getFirst(), e);
         }
     }
 }
