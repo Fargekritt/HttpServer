@@ -94,6 +94,11 @@ public class HttpRequestParserTest {
         stream = new ByteArrayInputStream(mockRequest.getBytes());
         InputStream finalStream3 = stream;
         assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(finalStream3));
+
+        mockRequest= "GET / HTTP/1.1 P\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
+        stream = new ByteArrayInputStream(mockRequest.getBytes());
+        InputStream finalStream4 = stream;
+        assertThrows(InvalidHttpRequestException.class, () -> parser.parseHttpRequest(finalStream4));
     }
 
     @Test
