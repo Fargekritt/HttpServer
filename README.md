@@ -14,7 +14,7 @@ This project is my attempt to make an HTTP server with sockets with as few 3rd p
          * [ ] Validate Version
      * [x] Parse Headers
        * [x] split HeaderName and headerValue
-       * [x] Split headerValue into a list
+       * [ ] Split headerValue into a list (Need to look into this, some headerField should and some not)
        * [x] Validate data
      * [ ] Parse Body
        * [ ] Based on Content-Length 
