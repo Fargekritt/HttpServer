@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class HttpRequestParserTest {
 
     @Test
-    void testParseHttpRequestParseStatusLine() {
+    void testParseHttpRequestShouldParseStatusLine() {
         String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 100\r\n\r\n";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
 
@@ -30,7 +30,7 @@ public class HttpRequestParserTest {
         }
     }
     @Test
-    void testParseHttpRequestParseHeaders() {
+    void testParseHttpRequestShouldParseHeaders() {
         String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 100\r\n\r\n";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
 
@@ -45,7 +45,7 @@ public class HttpRequestParserTest {
     }
 
     @Test
-    void testParseHttpRequestParseBdy(){
+    void testParseHttpRequestShouldParseBdy(){
         String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nContent-Length: 20\r\n\r\nHei, jeg heter amund";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
         String expectedBody ="Hei, jeg heter amund";

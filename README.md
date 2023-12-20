@@ -25,4 +25,9 @@ This project is my attempt to make an HTTP server with sockets with as few 3rd p
 
 
 * [ ] Testing
+  * [ ] HttpRequestParser
+    * [x] Basic test with simple input
+    * [ ] Basic test with simple invalid input
+    * [ ] Basic test with complex input 
+    * [ ] Basic test with complex invalid input 
 
