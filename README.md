@@ -5,19 +5,19 @@ This project is my attempt to make an HTTP server with sockets with as few 3rd p
 
 # TODO:
  * [ ] HttpRequest
-   * [ ] HttpRequestParser
-     * [ ] Parse status line
+   * [x] HttpRequestParser
+     * [x] Parse status line
        * [x] Split the status line up into the elements
-       * [ ] Validate data
-         * [ ] Validate method
+       * [X] Validate data
+         * [x] Validate method
          * [ ] Validate uri
          * [ ] Validate Version
      * [x] Parse Headers
        * [x] split HeaderName and headerValue
-       * [ ] Split headerValue into a list (Need to look into this, some headerField should and some not)
+       * [X] Split headerValue into a list (Need to look into this, some headerField should and some not)
        * [x] Validate data
-     * [ ] Parse Body
-       * [ ] Based on Content-Length 
+     * [x] Parse Body
+       * [x] Based on Content-Length 
        * [ ] Validate data
  * [ ] Logging
  * [ ] HttpResponse
