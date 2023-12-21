@@ -1,49 +1,57 @@
 package no.lullinj.http;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
+ * Stateless class
  * This class is Thread-safe. It can safely be used to parse
  * HTTP requests concurrently in multiple threads
  */
 public class HttpRequestParser {
-    private record ParsedStatusLine(HttpMethod method, String uri, String version){
+    private record ParsedStatusLine(HttpMethod method, String uri, String version) {
 
     }
 
 
     public HttpRequest parseHttpRequest(InputStream inputStream) throws InvalidHttpRequestException {
-        BufferedReader input = new BufferedReader(new InputStreamReader(inputStream));
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII))) {
 
-        Map<String, List<String>> headers;
-        int contentLength;
-        String body;
-        ParsedStatusLine statusLine;
-        statusLine = parseStatusLine(input);
-        headers = parseHeaders(input);
-        contentLength = getContentLength(headers);
-        body = parseBody(input, contentLength, statusLine.method);
+            //Local Variables, keeps the class stateless
+            Map<String, List<String>> headers;
+            int contentLength;
+            String body;
+            ParsedStatusLine statusLine;
 
-        try {
-            input.close();
+            //Parse the request
+            statusLine = parseStatusLine(input);
+            headers = parseHeaders(input);
+            contentLength = getContentLength(headers);
+            body = parseBody(input, contentLength, statusLine.method);
+
+            //Create the request
+            return new HttpRequest(headers, body, statusLine.method, statusLine.uri, statusLine.version);
+        } catch (InvalidHttpRequestException e) {
+            throw e;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new InvalidHttpRequestException(e);
         }
-        return new HttpRequest(headers, body, statusLine.method, statusLine.uri, statusLine.version);
+
     }
 
     private String parseBody(BufferedReader input, int contentLength, HttpMethod method) throws InvalidHttpRequestException {
         if (contentLength < 1 || method.equals(HttpMethod.GET) || method.equals(HttpMethod.DELETE)) {
-
             return "";
         }
 
         String body;
         try {
+            // TODO:
+            //  Chunk data for large sizes
             char[] buffer = new char[contentLength];
             int readBytesLength = input.read(buffer);
             if (readBytesLength < contentLength) {
@@ -59,56 +67,70 @@ public class HttpRequestParser {
     }
 
     private ParsedStatusLine parseStatusLine(BufferedReader input) throws InvalidHttpRequestException {
-        String[] statusLine = readLine(input).split(" ");
-        if (statusLine.length != 3) {
-            throw new InvalidHttpRequestException("Invalid Status line: " + Arrays.toString(statusLine));
-        }
-
         try {
-
-            HttpMethod method = HttpMethod.valueOf(statusLine[0]);
-            String uri = statusLine[1];
-            String version = statusLine[2];
-            return new ParsedStatusLine(method, uri, version);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidHttpRequestException("Unexpected value for method \"" + statusLine[0] + "\"");
+            String[] statusLine = readLine(input).split(" ");
+            if (statusLine.length != 3) {
+                throw new InvalidHttpRequestException("Invalid Status line: " + Arrays.toString(statusLine));
+            }
+            try {
+                HttpMethod method = HttpMethod.valueOf(statusLine[0]);
+                String uri = statusLine[1];
+                String version = statusLine[2];
+                return new ParsedStatusLine(method, uri, version);
+            } catch (IllegalArgumentException e) {
+                throw new InvalidHttpRequestException("Unexpected value for method \"" + statusLine[0] + "\"");
+            }
+        } catch (EOFException e) {
+            throw new InvalidHttpRequestException("Unexpected EOF When parsing status line ", e);
         }
     }
 
 
-    private String readLine(BufferedReader input) throws InvalidHttpRequestException {
+    /**
+     * @param input BufferedReader
+     * @return one line from the bufferedReader
+     * @throws EOFException if readLine returns null
+     */
+    private String readLine(BufferedReader input) throws EOFException {
 
         try {
             String line = input.readLine();
             if (line == null) {
-                return "";
+                throw new EOFException();
             }
             return line;
+        } catch (EOFException e) {
+            throw e;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
 
     private Map<String, List<String>> parseHeaders(BufferedReader input) throws InvalidHttpRequestException {
         Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        String headerLine = readLine(input);
-        while (!headerLine.isEmpty()) {
-            //Parse header
-            String[] headerElements = headerLine.split(":", 2);
-            if (headerElements.length != 2 || headerElements[1].isEmpty()) {
-                throw new InvalidHttpRequestException("Invalid header pair for headerLine \"" + headerLine + "\"");
-            }
-            //Creates
-            String headerName = headerElements[0].trim().toLowerCase();
-            String headerValue = headerElements[1].trim();
-
-
-            //gets the list of a header field, if it's nothing create arraylist
-            List<String> values = List.of(headerValue);
-
-            headers.put(headerName, values);
+        String headerLine;
+        try {
             headerLine = readLine(input);
+            while (!headerLine.isEmpty()) {
+                //Parse header
+                String[] headerElements = headerLine.split(":", 2);
+                if (headerElements.length != 2 || headerElements[1].isEmpty()) {
+                    throw new InvalidHttpRequestException("Invalid header pair for headerLine \"" + headerLine + "\"");
+                }
+                //Creates
+                String headerName = headerElements[0].trim().toLowerCase();
+                String headerValue = headerElements[1].trim();
+
+
+                //gets the list of a header field, if it's nothing create arraylist
+                List<String> values = List.of(headerValue);
+
+                headers.put(headerName, values);
+                headerLine = readLine(input);
+            }
+        } catch (EOFException e) {
+            throw new InvalidHttpRequestException("Unexpected EOF while parsing header ", e);
         }
 
         return headers;
@@ -120,17 +142,16 @@ public class HttpRequestParser {
         if (contentLengthHeader == null) {
             return 0;
         }
+
+        //Should never happen, header parser should throw before this can happen.
         if (contentLengthHeader.isEmpty()) {
             throw new InvalidHttpRequestException("No value in Content-length header");
         }
         try {
             return Integer.parseInt(contentLengthHeader.getFirst());
-
         } catch (NumberFormatException e) {
-
             throw new InvalidHttpRequestException("Invalid Content-Length value: " + contentLengthHeader.getFirst(), e);
         }
     }
-
 }
 
