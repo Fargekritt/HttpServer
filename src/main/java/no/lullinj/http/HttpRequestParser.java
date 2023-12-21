@@ -2,10 +2,8 @@ package no.lullinj.http;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Stateless class
@@ -18,6 +16,13 @@ public class HttpRequestParser {
     }
 
 
+    /**
+     * Parses an HTTP request from the given input stream.
+     *
+     * @param inputStream the input stream to read the request from
+     * @return the parsed HTTP request
+     * @throws InvalidHttpRequestException if the HTTP request is invalid
+     */
     public HttpRequest parseHttpRequest(InputStream inputStream) throws InvalidHttpRequestException {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII))) {
 
@@ -86,11 +91,7 @@ public class HttpRequestParser {
     }
 
 
-    /**
-     * @param input BufferedReader
-     * @return one line from the bufferedReader
-     * @throws EOFException if readLine returns null
-     */
+
     private String readLine(BufferedReader input) throws EOFException {
 
         try {
@@ -118,15 +119,28 @@ public class HttpRequestParser {
                 if (headerElements.length != 2 || headerElements[1].isEmpty()) {
                     throw new InvalidHttpRequestException("Invalid header pair for headerLine \"" + headerLine + "\"");
                 }
-                //Creates
+                // Cleans up the header name of value
                 String headerName = headerElements[0].trim().toLowerCase();
                 String headerValue = headerElements[1].trim();
 
 
-                //gets the list of a header field, if it's nothing create arraylist
-                List<String> values = List.of(headerValue);
+                List<String> values = new ArrayList<>();
+                // If headerField is a cookie it should not be seperated on ","
+                // According to RFC7230#section-3.2.2
+                if(!headerName.equals("set-cookie")){
+                    String[] headerValues = headerValue.split(",");
+                    values.addAll(Arrays.asList(headerValues));
+                } else {
+                    values.add(headerValue);
+                }
 
-                headers.put(headerName, values);
+
+                //gets the list of a header field, if it's nothing create arraylist
+                if(headers.containsKey(headerName)){
+                    headers.get(headerName).addAll(values);
+                } else {
+                    headers.put(headerName, values);
+                }
                 headerLine = readLine(input);
             }
         } catch (EOFException e) {

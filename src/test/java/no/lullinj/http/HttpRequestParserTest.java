@@ -4,9 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class HttpRequestParserTest {
 
@@ -160,20 +163,43 @@ public class HttpRequestParserTest {
         assertEquals("Unexpected value for method \"GETT\"",exception.getMessage());
     }
 
-//Should headers be split? not sure need to do research
-//    @Test
-//    void testParseHttpRequestParseListHeaders() {
-//        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nnames: amund;fredrik;brede\r\n\r\n";
-//        InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
-//
-//        HttpRequestParser parser = new HttpRequestParser();
-//        try {
-//            HttpRequest request = parser.parseHttpRequest(stream);
-//            List<String> header= request.getHeader("names");
-//            assertEquals(List.of("amund", "brede","fredrik"), header);
-//        } catch (InvalidHttpRequestException e) {
-//            fail("Exception should not be thrown.");
-//        }
-//    }
+
+    @Test
+    void testParseHttpRequestParseListHeaders() {
+        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nnames: amund,fredrik,brede\r\n\r\n";
+        InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
+
+        HttpRequestParser parser = new HttpRequestParser();
+        try {
+            HttpRequest request = parser.parseHttpRequest(stream);
+            List<String> header = request.getHeader("names");
+            List<String> exceptedHeader = List.of("amund","fredrik", "brede");
+
+
+
+            assertThat(header).containsExactlyElementsOf(exceptedHeader);
+        } catch (InvalidHttpRequestException e) {
+            fail("Exception should not be thrown.");
+        }
+    }
+
+    @Test
+    void testParseHttpRequestShouldNotParseListHeadersSetCookie() {
+        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nset-cookie: amund,fredrik,brede\r\n\r\n";
+        InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
+
+        HttpRequestParser parser = new HttpRequestParser();
+        try {
+            HttpRequest request = parser.parseHttpRequest(stream);
+            List<String> header = request.getHeader("set-cookie");
+            List<String> exceptedHeader = List.of("amund,fredrik,brede");
+
+
+
+            assertThat(header).containsExactlyElementsOf(exceptedHeader);
+        } catch (InvalidHttpRequestException e) {
+            fail("Exception should not be thrown.");
+        }
+    }
 
 }
