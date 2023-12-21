@@ -66,8 +66,6 @@ public class HttpRequestParser {
         } catch (IOException e) {
             throw new InvalidHttpRequestException(e);
         }
-
-
         return body;
     }
 
