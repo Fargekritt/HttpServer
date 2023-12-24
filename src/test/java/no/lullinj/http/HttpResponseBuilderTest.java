@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HttpResponseBuilderTest {
-    
-    @Test
+
     void testStatusMessageIsCorrect() {
+
         HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
 
         responseBuilder.setStatusCode(200);
