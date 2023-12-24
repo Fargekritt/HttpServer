@@ -2,21 +2,36 @@ package no.lullinj.http;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
 
 public class HttpResponse {
 
     private final Map<String, List<String>> headers;
     private String body;
-    private String statusLine;
+    private String statusMessage;
 
-    public HttpResponse(Map<String, List<String>> headers, String body, String statusLine) {
+    private int statusCode;
+
+    public HttpResponse(Map<String, List<String>> headers, String body, String statusMessage, int statusCode) {
 
         this.headers = headers;
         this.body = body;
-        this.statusLine = statusLine;
-        Optional<String> optionalString = Optional.of("heik");
-        optionalString.orElse("awd" + "hei");
+        this.statusMessage = statusMessage;
+        this.statusCode = statusCode;
+    }
+
+    public HttpResponse(Map<String, List<String>> headers, String statusMessage, int statusCode) {
+
+        this.headers = headers;
+        this.body = "";
+        this.statusMessage = statusMessage;
+        this.statusCode = statusCode;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
     }
 }

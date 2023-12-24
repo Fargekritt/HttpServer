@@ -1,6 +1,7 @@
 package no.lullinj.http;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HttpResponseBuilder {
@@ -38,5 +39,19 @@ public class HttpResponseBuilder {
     public void setBody(String body) {
         this.body = body.getBytes();
         headers.put("content-length", List.of(String.valueOf(body.getBytes().length)));
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
+        headers.put("content-length", List.of(String.valueOf(body.length)));
+    }
+
+
+    public HttpResponse buid(){
+        if(body == null){
+            return new HttpResponse(headers, statusString, statusCode);
+
+        }
+        return new HttpResponse(headers, new String(body, StandardCharsets.UTF_8), statusString, statusCode);
     }
 }
