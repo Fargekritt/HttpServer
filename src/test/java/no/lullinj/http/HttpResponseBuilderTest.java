@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HttpResponseBuilderTest {
 
+    @Test
     void testStatusMessageIsCorrect() {
 
         HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
