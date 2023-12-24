@@ -3,7 +3,8 @@ package no.lullinj.http;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
+import org.jetbrains.annotations.Contract;
+
 
 /**
  * Stateless class
@@ -23,6 +24,7 @@ public class HttpRequestParser {
      * @return the parsed HTTP request
      * @throws InvalidHttpRequestException if the HTTP request is invalid
      */
+    @Contract(pure=true)
     public HttpRequest parseHttpRequest(InputStream inputStream) throws InvalidHttpRequestException {
         try (BufferedReader input = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII))) {
 
@@ -47,6 +49,7 @@ public class HttpRequestParser {
         }
 
     }
+
 
     private String parseBody(BufferedReader input, int contentLength, HttpMethod method) throws InvalidHttpRequestException {
         if (contentLength < 1 || method.equals(HttpMethod.GET) || method.equals(HttpMethod.DELETE)) {
