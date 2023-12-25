@@ -1,15 +1,23 @@
 package no.lullinj.http;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class HttpResponseBuilderTest {
+    HttpResponseBuilder responseBuilder;
+    @BeforeEach
+    void setup(){
 
+        responseBuilder = new HttpResponseBuilder();
+    }
     @Test
     void testStatusMessageIsCorrect() {
 
-        HttpResponseBuilder responseBuilder = new HttpResponseBuilder();
+
 
         responseBuilder.setStatusCode(200);
         HttpResponse response = responseBuilder.buid();
@@ -31,6 +39,22 @@ class HttpResponseBuilderTest {
         assertEquals(response.getStatusCode(), 500);
         assertEquals(response.getStatusMessage(), "INTERNAL SERVER ERROR");
 
+    }
+
+    @Test
+    void testContentLength(){
+        String exceptedBody = "hei alle sammen";
+        int exceptedContentLength = exceptedBody.length();
+
+        responseBuilder.setBody(exceptedBody);
+        responseBuilder.setStatusCode(200);
+        HttpResponse response = responseBuilder.buid();
+
+        String actualBody = new String(response.getBody());
+        int actualContentLength = Integer.parseInt(response.getHeader("content-length").getFirst());
+
+        assertEquals(actualBody, exceptedBody);
+        assertEquals(actualContentLength,exceptedContentLength);
     }
 
 
