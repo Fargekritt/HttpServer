@@ -54,7 +54,9 @@ public class HttpRequestParserTest {
         try {
             HttpRequest request = parser.parseHttpRequest(stream);
             List<String> header= request.getHeader("content-length");
-            String body = request.getBody();
+            String body = new String(request.getBody());
+
+
             assertEquals(List.of("20"), header);
             assertEquals(body.length(), expectedBody.length());
             assertEquals(body, expectedBody);
@@ -72,9 +74,9 @@ public class HttpRequestParserTest {
         try {
             HttpRequest request = parser.parseHttpRequest(stream);
             List<String> header= request.getHeader("content-length");
-            String body = request.getBody();
+            char[]  body = request.getBody();
             assertEquals(List.of("20"), header);
-            assert(body.isEmpty());
+            assert(body.length == 0);
         } catch (InvalidHttpRequestException e) {
             fail("Exception should not be thrown.");
         }
@@ -88,9 +90,9 @@ public class HttpRequestParserTest {
         try {
             HttpRequest request = parser.parseHttpRequest(stream);
             List<String> header= request.getHeader("content-length");
-            String body = request.getBody();
+            char[]  body = request.getBody();
             assertEquals(List.of("20"), header);
-            assert(body.isEmpty());
+            assert(body.length == 0);
         } catch (InvalidHttpRequestException e) {
             fail("Exception should not be thrown.");
         }

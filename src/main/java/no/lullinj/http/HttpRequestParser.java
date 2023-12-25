@@ -31,7 +31,7 @@ public class HttpRequestParser {
             //Local Variables, keeps the class stateless
             Map<String, List<String>> headers;
             int contentLength;
-            String body;
+            char[] body;
             ParsedStatusLine statusLine;
 
             //Parse the request
@@ -51,25 +51,24 @@ public class HttpRequestParser {
     }
 
 
-    private String parseBody(BufferedReader input, int contentLength, HttpMethod method) throws InvalidHttpRequestException {
+    private char[] parseBody(BufferedReader input, int contentLength, HttpMethod method) throws InvalidHttpRequestException {
         if (contentLength < 1 || method.equals(HttpMethod.GET) || method.equals(HttpMethod.DELETE)) {
-            return "";
+            return new char[0];
         }
 
-        String body;
+        char[] buffer;
         try {
             // TODO:
             //  Chunk data for large sizes
-            char[] buffer = new char[contentLength];
+            buffer = new char[contentLength];
             int readBytesLength = input.read(buffer);
             if (readBytesLength < contentLength) {
                 throw new InvalidHttpRequestException("Body too short, Content-Length:" + contentLength + " Body Length: " + readBytesLength);
             }
-            body = new String(buffer);
         } catch (IOException e) {
             throw new InvalidHttpRequestException(e);
         }
-        return body;
+        return buffer;
     }
 
     private ParsedStatusLine parseStatusLine(BufferedReader input) throws InvalidHttpRequestException {

@@ -7,7 +7,7 @@ import java.util.Map;
 public class HttpRequest {
 
     private final Map<String, List<String>>  headers;
-    private final String body;
+    private final char[] body;
 
     private final HttpMethod method;
 
@@ -16,7 +16,7 @@ public class HttpRequest {
     private final String version;
 
 
-    public HttpRequest(Map<String, List<String>> headers, String body, HttpMethod method, String uri, String version){
+    public HttpRequest(Map<String, List<String>> headers, char[] body, HttpMethod method, String uri, String version){
         this.headers = headers;
         this.body = body;
         this.method = method;
@@ -29,7 +29,7 @@ public class HttpRequest {
 
 
 
-    public String getBody() {
+    public char[] getBody() {
         return body;
     }
 
