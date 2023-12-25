@@ -12,7 +12,7 @@ public class HttpResponseBuilder {
 
     private String statusString;
 
-    private Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private final Map<String, List<String>> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     public void addHeader(String name, String value) {
         if (!headers.containsKey(name)) {
@@ -47,7 +47,7 @@ public class HttpResponseBuilder {
     }
 
 
-    public HttpResponse buid(){
+    public HttpResponse build(){
         if(body == null){
             return new HttpResponse(headers, statusString, statusCode);
 

@@ -3,8 +3,6 @@ package no.lullinj.http;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class HttpResponseBuilderTest {
@@ -20,22 +18,22 @@ class HttpResponseBuilderTest {
 
 
         responseBuilder.setStatusCode(200);
-        HttpResponse response = responseBuilder.buid();
+        HttpResponse response = responseBuilder.build();
         assertEquals(response.getStatusCode(), 200);
         assertEquals(response.getStatusMessage(), "OK");
 
         responseBuilder.setStatusCode(300);
-        response = responseBuilder.buid();
+        response = responseBuilder.build();
         assertEquals(response.getStatusCode(), 300);
         assertEquals(response.getStatusMessage(), "MULTIPLE CHOICES");
 
         responseBuilder.setStatusCode(400);
-        response = responseBuilder.buid();
+        response = responseBuilder.build();
         assertEquals(response.getStatusCode(), 400);
         assertEquals(response.getStatusMessage(), "BAD REQUEST");
 
         responseBuilder.setStatusCode(500);
-        response = responseBuilder.buid();
+        response = responseBuilder.build();
         assertEquals(response.getStatusCode(), 500);
         assertEquals(response.getStatusMessage(), "INTERNAL SERVER ERROR");
 
@@ -48,7 +46,7 @@ class HttpResponseBuilderTest {
 
         responseBuilder.setBody(exceptedBody);
         responseBuilder.setStatusCode(200);
-        HttpResponse response = responseBuilder.buid();
+        HttpResponse response = responseBuilder.build();
 
         String actualBody = new String(response.getBody());
         int actualContentLength = Integer.parseInt(response.getHeader("content-length").getFirst());

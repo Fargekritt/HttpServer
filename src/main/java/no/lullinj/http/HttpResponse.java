@@ -7,10 +7,10 @@ import java.util.Map;
 public class HttpResponse {
 
     private final Map<String, List<String>> headers;
-    private byte[] body;
-    private String statusMessage;
+    private final byte[] body;
+    private final String statusMessage;
 
-    private int statusCode;
+    private final int statusCode;
 
     public HttpResponse(Map<String, List<String>> headers, String body, String statusMessage, int statusCode) {
 
