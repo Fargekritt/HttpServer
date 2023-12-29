@@ -5,6 +5,9 @@ This project is my attempt to make an HTTP server with sockets with as few 3rd p
 
 # TODO:
  * [ ] HttpRequest
+   * [ ] Cookies
+     * [ ] Needs to be properly parsed
+     * How even work?
    * [x] HttpRequestParser
      * [x] Parse status line
        * [x] Split the status line up into the elements
