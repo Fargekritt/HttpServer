@@ -185,19 +185,18 @@ public class HttpRequestParserTest {
     }
 
     @Test
-    void testParseHttpRequestShouldNotParseListHeadersSetCookie() {
-        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\nset-cookie: amund,fredrik,brede\r\n\r\n";
+    void testParseHttpRequestShouldParseCookies() {
+        String mockRequest= "GET / HTTP/1.1\r\nHost: host\r\ncookie: name=amund\r\n\r\n";
         InputStream stream = new ByteArrayInputStream(mockRequest.getBytes());
 
         HttpRequestParser parser = new HttpRequestParser();
         try {
             HttpRequest request = parser.parseHttpRequest(stream);
-            List<String> header = request.getHeader("set-cookie");
-            List<String> exceptedHeader = List.of("amund,fredrik,brede");
+            Cookie cookie = request.getCookie("name");
+            Cookie exceptedCookie = new Cookie("name", "amund");
 
 
-
-            assertThat(header).containsExactlyElementsOf(exceptedHeader);
+            assertThat(cookie).isEqualTo(exceptedCookie);
         } catch (InvalidHttpRequestException e) {
             fail("Exception should not be thrown.");
         }

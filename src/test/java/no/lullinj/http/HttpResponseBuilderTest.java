@@ -56,4 +56,13 @@ class HttpResponseBuilderTest {
     }
 
 
+    @Test
+    void testAddHeader(){
+        responseBuilder.addHeader("Content-Type", "application/json");
+        responseBuilder.addHeader("Cache-Control", "no-cache");
+
+
+    }
+
+
 }

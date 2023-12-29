@@ -15,13 +15,16 @@ public class HttpRequest {
 
     private final String version;
 
+    private final List<Cookie> cookies;
 
-    public HttpRequest(Map<String, List<String>> headers, char[] body, HttpMethod method, String uri, String version){
+
+    public HttpRequest(Map<String, List<String>> headers, char[] body, HttpMethod method, String uri, String version, List<Cookie> cookies){
         this.headers = headers;
         this.body = body;
         this.method = method;
         this.uri = uri;
         this.version = version;
+        this.cookies = cookies;
     }
 
 
@@ -46,5 +49,14 @@ public class HttpRequest {
 
     public String getVersion() {
         return version;
+    }
+
+    public Cookie getCookie(String name) {
+        for (Cookie cookie : cookies) {
+            if(cookie.getName().equals(name)){
+                return cookie;
+            }
+        }
+        return null;
     }
 }

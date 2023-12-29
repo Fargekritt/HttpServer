@@ -33,15 +33,17 @@ public class HttpRequestParser {
             int contentLength;
             char[] body;
             ParsedStatusLine statusLine;
+            List<Cookie> cookies;
 
             //Parse the request
             statusLine = parseStatusLine(input);
             headers = parseHeaders(input);
             contentLength = getContentLength(headers);
             body = parseBody(input, contentLength, statusLine.method);
+            cookies = parseCookie(headers);
 
             //Create the request
-            return new HttpRequest(headers, body, statusLine.method, statusLine.uri, statusLine.version);
+            return new HttpRequest(headers, body, statusLine.method, statusLine.uri, statusLine.version, cookies);
         } catch (InvalidHttpRequestException e) {
             throw e;
         } catch (IOException e) {
@@ -127,7 +129,7 @@ public class HttpRequestParser {
                 List<String> values = new ArrayList<>();
                 // If headerField is a cookie it should not be seperated on ","
                 // According to RFC7230#section-3.2.2
-                if(!headerName.equals("set-cookie")){
+                if(!headerName.equals("cookie")){
                     String[] headerValues = headerValue.split(",");
                     values.addAll(Arrays.asList(headerValues));
                 } else {
@@ -166,6 +168,27 @@ public class HttpRequestParser {
         } catch (NumberFormatException e) {
             throw new InvalidHttpRequestException("Invalid Content-Length value: " + contentLengthHeader.getFirst(), e);
         }
+    }
+
+    private List<Cookie> parseCookie(Map<String, List<String>> headers){
+        List<String> cookieStrings = headers.get("cookie");
+        List<Cookie> cookies = new ArrayList<>();
+
+        if(cookieStrings == null){
+            return cookies;
+        }
+        for (String cookieString : cookieStrings) {
+            Cookie cookie;
+            String[] elements = cookieString.split(";");
+            if(elements.length == 1){
+                String[] nameValue = elements[0].split("=");
+                cookie = new Cookie(nameValue[0], nameValue[1]);
+                cookies.add(cookie);
+            }
+        }
+
+
+        return cookies;
     }
 }
 

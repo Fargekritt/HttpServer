@@ -4,9 +4,7 @@ import no.lullinj.http.HttpRequest;
 import no.lullinj.http.HttpRequestParser;
 import no.lullinj.http.InvalidHttpRequestException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,7 +14,6 @@ import java.net.Socket;
  */
 public class Server {
     private final int port;
-    private ServerSocket serverSocket;
 
     public Server(int port) {
         this.port = port;
@@ -29,9 +26,8 @@ public class Server {
      * @throws IOException if an I/O error occurs
      */
     public void start() throws IOException {
-        serverSocket = new ServerSocket(port);
+        ServerSocket serverSocket = new ServerSocket(port);
         Socket clientSocket = serverSocket.accept();
-        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
         HttpRequest message;
         try {
@@ -58,8 +54,7 @@ public class Server {
         HttpRequestParser parser = new HttpRequestParser();
 
         try {
-            HttpRequest request = parser.parseHttpRequest(socket.getInputStream());
-            return request;
+            return parser.parseHttpRequest(socket.getInputStream());
         } catch (IOException e) {
             throw new InvalidHttpRequestException();
         }
