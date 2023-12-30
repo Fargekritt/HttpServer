@@ -26,29 +26,23 @@ public class HttpRequestParser {
      */
     @Contract(pure=true)
     public HttpRequest parseHttpRequest(InputStream inputStream) throws InvalidHttpRequestException {
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII))) {
+        BufferedReader input = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.US_ASCII));
+        //Local Variables, keeps the class stateless
+        Map<String, List<String>> headers;
+        int contentLength;
+        char[] body;
+        ParsedStatusLine statusLine;
+        List<Cookie> cookies;
 
-            //Local Variables, keeps the class stateless
-            Map<String, List<String>> headers;
-            int contentLength;
-            char[] body;
-            ParsedStatusLine statusLine;
-            List<Cookie> cookies;
+        //Parse the request
+        statusLine = parseStatusLine(input);
+        headers = parseHeaders(input);
+        contentLength = getContentLength(headers);
+        body = parseBody(input, contentLength, statusLine.method);
+        cookies = parseCookie(headers);
 
-            //Parse the request
-            statusLine = parseStatusLine(input);
-            headers = parseHeaders(input);
-            contentLength = getContentLength(headers);
-            body = parseBody(input, contentLength, statusLine.method);
-            cookies = parseCookie(headers);
-
-            //Create the request
-            return new HttpRequest(headers, body, statusLine.method, statusLine.uri, statusLine.version, cookies);
-        } catch (InvalidHttpRequestException e) {
-            throw e;
-        } catch (IOException e) {
-            throw new InvalidHttpRequestException(e);
-        }
+        //Create the request
+        return new HttpRequest(headers, body, statusLine.method, statusLine.uri, statusLine.version, cookies);
 
     }
 

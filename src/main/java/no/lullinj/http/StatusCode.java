@@ -9,6 +9,7 @@ public class StatusCode {
         statusCodes.put(200, "OK");
         statusCodes.put(300, "MULTIPLE CHOICES");
         statusCodes.put(400, "BAD REQUEST");
+        statusCodes.put(404, "NOT FOUND");
         statusCodes.put(500, "INTERNAL SERVER ERROR");
     }
 

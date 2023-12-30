@@ -50,7 +50,6 @@ public class HttpResponseBuilder {
     public HttpResponse build(){
         if(body == null){
             return new HttpResponse(headers, statusString, statusCode);
-
         }
         return new HttpResponse(headers, new String(body, StandardCharsets.UTF_8), statusString, statusCode);
     }

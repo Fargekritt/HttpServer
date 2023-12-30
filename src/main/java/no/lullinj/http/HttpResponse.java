@@ -51,4 +51,8 @@ public class HttpResponse {
     public byte[] getBody() {
         return body;
     }
+
+    public String getStatusLine() {
+        return "HTTP/1.1 " + getStatusCode() + "  "+ getStatusMessage();
+    }
 }
