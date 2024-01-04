@@ -10,8 +10,6 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException, URISyntaxException {
-        System.out.println("Hello world!");
-        System.out.println();
 
         Server server = new Server(9900, "static");
         server.start();
